@@ -1,5 +1,20 @@
 import {useState, useEffect} from "react";
 import './App.css';
+import { initializeApp } from "firebase/app";
+import { getAnalytics } from "firebase/analytics";
+
+const firebaseConfig = {
+  apiKey: "AIzaSyA4AZDvV_Exi4EarJ34_bzKfZSkRYpcn1s",
+  authDomain: "coquiz-19d0e.firebaseapp.com",
+  projectId: "coquiz-19d0e",
+  storageBucket: "coquiz-19d0e.appspot.com",
+  messagingSenderId: "1053063364183",
+  appId: "1:1053063364183:web:459d13f952612c98b32d12",
+  measurementId: "G-WW49S6440H"
+};
+
+const app = initializeApp(firebaseConfig);
+const analytics = getAnalytics(app);
 
 const App = () => {
 
