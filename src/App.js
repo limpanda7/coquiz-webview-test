@@ -1,22 +1,14 @@
 import {useState, useEffect} from "react";
 import './App.css';
-import { initializeApp } from "firebase/app";
-import { getAnalytics } from "firebase/analytics";
-
-const firebaseConfig = {
-  apiKey: "AIzaSyA4AZDvV_Exi4EarJ34_bzKfZSkRYpcn1s",
-  authDomain: "coquiz-19d0e.firebaseapp.com",
-  projectId: "coquiz-19d0e",
-  storageBucket: "coquiz-19d0e.appspot.com",
-  messagingSenderId: "1053063364183",
-  appId: "1:1053063364183:web:459d13f952612c98b32d12",
-  measurementId: "G-WW49S6440H"
-};
-
-const app = initializeApp(firebaseConfig);
-const analytics = getAnalytics(app);
+import detectEthereumProvider from '@metamask/detect-provider'
 
 const App = () => {
+
+  useEffect(() => {
+    document.addEventListener('message', e => {
+      alert('받은 데이터: ' + e.data);
+    })
+  }, []);
 
   const [address, setAddress] = useState('');
   const [keys, setKeys] = useState(0);
@@ -28,15 +20,13 @@ const App = () => {
 
   const {userId, rank, purchased} = form;
 
-  const postMessageToApp = (str) => {
-    window.ReactNativeWebView.postMessage(str);
+  const postMessageToApp = (type, value) => {
+    const message = {
+      type,
+      value
+    };
+    window.ReactNativeWebView.postMessage(JSON.stringify(message));
   }
-
-  useEffect(() => {
-    document.addEventListener('message', e => {
-      alert('받은 데이터: ' + e.data);
-    })
-  }, [])
 
   const handleInput = e => {
     setForm({
@@ -52,17 +42,17 @@ const App = () => {
     })
   }
 
-  const connectWallet = () => {
-    window.ethereum
-      .request({ method: 'eth_requestAccounts' })
-      .then(data => {
-        const addr = data[0];
-        setAddress(addr);
-        postMessageToApp(JSON.stringify({
-          type: 'address',
-          value: addr
-        }))
-      })
+  const connectWallet = async() => {
+    const provider = await detectEthereumProvider();
+    if (!provider) {
+      alert('Please install Metamask!');
+    } else {
+      const data = await provider.request({
+        method: 'eth_requestAccounts'
+      });
+      setAddress(data[0]);
+      postMessageToApp('address', data[0]);
+    }
   }
 
   return (
