@@ -50,10 +50,19 @@ const App = () => {
     })
   }
 
+  const pushDataLayer = () => {
+    window.dataLayer.push({
+      userId,
+      rank,
+      purchased: purchased ? 'Y' : 'N',
+    })
+    alert('GA로 보내기 완료');
+  }
+
   return (
     <div>
       <div>
-        <button onClick={() => postMessageToApp('connectWallet')}>지갑연결</button>
+        <button onClick={() => postMessageToApp('connectWallet')}>지갑연결</button><br/>
         <button onClick={() => postMessageToApp('loadWallet')}>지갑조회</button><br/>
         <span>연결된 지갑주소: {address}</span>
       </div>
@@ -61,7 +70,7 @@ const App = () => {
       <hr/>
 
       <div>
-        <button>아래 정보를 GA로 보내기</button>
+        <button onClick={() => pushDataLayer()}>아래 정보를 GA로 보내기</button>
         <div>
           <span style={{marginRight: '10px'}}>아이디</span>
           <input name='userId' value={userId} onChange={handleInput}/>
@@ -76,12 +85,12 @@ const App = () => {
         </div>
       </div>
 
-      <hr/>
+      {/*<hr/>*/}
 
-      <div>
-        <button onClick={() => postMessageToApp('watchAdmob')}>광고시청</button><br/>
-        <span>열쇠 갯수: {keys}</span>
-      </div>
+      {/*<div>*/}
+      {/*  <button onClick={() => postMessageToApp('watchAdmob')}>광고시청</button><br/>*/}
+      {/*  <span>열쇠 갯수: {keys}</span>*/}
+      {/*</div>*/}
 
     </div>
   );
