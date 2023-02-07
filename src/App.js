@@ -52,23 +52,10 @@ const App = () => {
     })
   }
 
-  const connectWallet = () => {
-    window.ethereum
-      .request({ method: 'eth_requestAccounts' })
-      .then(data => {
-        const addr = data[0];
-        setAddress(addr);
-        postMessageToApp(JSON.stringify({
-          type: 'address',
-          value: addr
-        }))
-      })
-  }
-
   return (
     <div>
       <div>
-        <button onClick={() => connectWallet()}>지갑연결</button><br/>
+        <button onClick={() => postMessageToApp('wallet')}>지갑연결</button><br/>
         <span>연결된 지갑주소: {address}</span>
       </div>
 
