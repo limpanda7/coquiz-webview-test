@@ -19,17 +19,15 @@ const App = () => {
       value
     };
     window.ReactNativeWebView.postMessage(JSON.stringify(message));
-
-    console.log('네이티브로 보낸 데이터: ' + JSON.stringify(message));
   }
 
   useEffect(() => {
     document.addEventListener('message', e => {
-      console.log('네이티브로부터 받은 데이터: ' + e.data);
+      alert('네이티브로부터 받은 데이터: ' + e.data);
 
       const data = JSON.parse(e.data);
       switch (data.type) {
-        case 'walletAddress':
+        case 'loadWallet':
           setAddress(data.value);
           break;
         default:
