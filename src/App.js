@@ -1,20 +1,5 @@
 import {useState, useEffect} from "react";
 import './App.css';
-import { initializeApp } from "firebase/app";
-import { getAnalytics } from "firebase/analytics";
-
-const firebaseConfig = {
-  apiKey: "AIzaSyA4AZDvV_Exi4EarJ34_bzKfZSkRYpcn1s",
-  authDomain: "coquiz-19d0e.firebaseapp.com",
-  projectId: "coquiz-19d0e",
-  storageBucket: "coquiz-19d0e.appspot.com",
-  messagingSenderId: "1053063364183",
-  appId: "1:1053063364183:web:459d13f952612c98b32d12",
-  measurementId: "G-WW49S6440H"
-};
-
-const app = initializeApp(firebaseConfig);
-const analytics = getAnalytics(app);
 
 const App = () => {
 
@@ -28,13 +13,28 @@ const App = () => {
 
   const {userId, rank, purchased} = form;
 
-  const postMessageToApp = (str) => {
-    window.ReactNativeWebView.postMessage(str);
+  const postMessageToApp = (type, value) => {
+    const message = {
+      type,
+      value
+    };
+    window.ReactNativeWebView.postMessage(JSON.stringify(message));
+
+    console.log('네이티브로 보낸 데이터: ' + JSON.stringify(message));
   }
 
   useEffect(() => {
     document.addEventListener('message', e => {
-      alert('받은 데이터: ' + e.data);
+      console.log('네이티브로부터 받은 데이터: ' + e.data);
+
+      const data = JSON.parse(e.data);
+      switch (data.type) {
+        case 'walletAddress':
+          setAddress(data.value);
+          break;
+        default:
+          break;
+      }
     })
   }, [])
 
@@ -55,15 +55,9 @@ const App = () => {
   return (
     <div>
       <div>
-        <button onClick={() => postMessageToApp('wallet')}>지갑연결</button><br/>
+        <button onClick={() => postMessageToApp('connectWallet')}>지갑연결</button>
+        <button onClick={() => postMessageToApp('loadWallet')}>지갑조회</button><br/>
         <span>연결된 지갑주소: {address}</span>
-      </div>
-
-      <hr/>
-
-      <div>
-        <button onClick={() => postMessageToApp('admob')}>광고시청</button><br/>
-        <span>열쇠 갯수: {keys}</span>
       </div>
 
       <hr/>
@@ -82,6 +76,13 @@ const App = () => {
           <span style={{marginRight: '10px'}}>구매여부</span>
           <input type='checkbox' name='purchased' checked={purchased} onChange={handleCheckbox}/>
         </div>
+      </div>
+
+      <hr/>
+
+      <div>
+        <button onClick={() => postMessageToApp('watchAdmob')}>광고시청</button><br/>
+        <span>열쇠 갯수: {keys}</span>
       </div>
 
     </div>
