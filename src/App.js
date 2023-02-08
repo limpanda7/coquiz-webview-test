@@ -52,6 +52,7 @@ const App = () => {
 
   const pushDataLayer = () => {
     window.dataLayer.push({
+      event: 'update',
       userId,
       rank,
       purchased: purchased ? 'Y' : 'N',
