@@ -1,17 +1,32 @@
 import {useState, useEffect} from "react";
 import './App.css';
+import { initializeApp } from "firebase/app";
+import {getAnalytics, setUserProperties, setAnalyticsCollectionEnabled} from "firebase/analytics";
 
 const App = () => {
 
+  const firebaseConfig = {
+    apiKey: "AIzaSyA4AZDvV_Exi4EarJ34_bzKfZSkRYpcn1s",
+    authDomain: "coquiz-19d0e.firebaseapp.com",
+    projectId: "coquiz-19d0e",
+    storageBucket: "coquiz-19d0e.appspot.com",
+    messagingSenderId: "1053063364183",
+    appId: "1:1053063364183:web:459d13f952612c98b32d12",
+    measurementId: "G-WW49S6440H"
+  };
+
+  const app = initializeApp(firebaseConfig);
+  const analytics = getAnalytics(app);
+  setAnalyticsCollectionEnabled(analytics, true);
+
   const [address, setAddress] = useState('');
-  const [keys, setKeys] = useState(0);
   const [form, setForm] = useState({
     userId: '',
     rank: '',
-    purchased: false
+    joinTime: '',
   });
 
-  const {userId, rank, purchased} = form;
+  const {userId, rank, joinTime} = form;
 
   const postMessageToApp = (type, value) => {
     const message = {
@@ -43,20 +58,17 @@ const App = () => {
     })
   }
 
-  const handleCheckbox = e => {
-    setForm({
-      ...form,
-      [e.target.name]: e.target.checked,
-    })
-  }
-
   const pushDataLayer = () => {
     window.dataLayer.push({
       event: 'update',
       userId,
       rank,
-      purchased: purchased ? 'Y' : 'N',
     })
+
+    setUserProperties(analytics, {
+      joinTime,
+    })
+
     alert('GA로 보내기 완료');
   }
 
@@ -81,18 +93,10 @@ const App = () => {
           <input name='rank' value={rank} onChange={handleInput}/>
         </div>
         <div>
-          <span style={{marginRight: '10px'}}>구매여부</span>
-          <input type='checkbox' name='purchased' checked={purchased} onChange={handleCheckbox}/>
+          <span style={{marginRight: '10px'}}>참여횟수</span>
+          <input name='joinTime' value={joinTime} onChange={handleInput}/>
         </div>
       </div>
-
-      {/*<hr/>*/}
-
-      {/*<div>*/}
-      {/*  <button onClick={() => postMessageToApp('watchAdmob')}>광고시청</button><br/>*/}
-      {/*  <span>열쇠 갯수: {keys}</span>*/}
-      {/*</div>*/}
-
     </div>
   );
 }
